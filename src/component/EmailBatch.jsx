@@ -80,7 +80,7 @@ const EmailBatch = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5500/validate-emails', {
+            const response = await fetch('http://localhost:8000/validate-emails', {
                 method: 'POST',
                 body: formData,
             });
@@ -104,7 +104,7 @@ const EmailBatch = () => {
         let obj = {"email":email}
 
         try {
-            const response = await fetch('http://localhost:5500/validate-email', {
+            const response = await fetch('http://localhost:8000/validate-email', {
                 method: 'POST',
                 headers: {
             'Content-Type': 'application/json',
