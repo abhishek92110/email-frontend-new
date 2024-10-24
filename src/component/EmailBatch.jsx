@@ -68,143 +68,34 @@ const EmailBatch = () => {
     }
 
     // Handle form submission
-    // const handleVerify = async () => {
-    //     if (!csvFile) {
-    //         console.error("No file selected");
-    //         return;
-    //     }
-
-    //     const formData = new FormData();
-    //     formData.append('file', csvFile);
-
-    //     setLoading(true);
-
-    //     try {
-    //         const response = await fetch('http://localhost:8000/validate-emails', {
-    //             method: 'POST',
-    //             body: formData,
-    //         });
-    //         const data = await response.json();
-    //         console.log('Response:', data);
-    //         setResponseData(data.results)
-    //         setShowData(data.results)
-    //     } catch (error) {
-    //         console.error('Error uploading file:', error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-
-
-// const handleVerify = async () => {
-//     if (!csvFile) {
-//         console.error("No file selected");
-//         return;
-//     }
-
-//     setLoading(true);
-
-//         try {
-//             const response = await fetch('http://localhost:5500/validate-emails', {
-//                 method: 'POST',
-//                 body: formData,
-//             });
-//             const data = await response.json();
-//             console.log('Response:', data);
-//             setResponseData(data.results)
-//             setShowData(data.results)
-//         } catch (error) {
-//             console.error('Error uploading file:', error);
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-
-
-const handleVerify = async () => {
-    if (!csvFile) {
-        console.error("No file selected");
-        return;
-    }
-
-    setLoading(true);
-
-    try {
-        // Step 1: Parse the file to extract emails (CSV or Excel)
-        const emails = await extractEmailsFromFile(csvFile);
-
-        // Step 2: Process emails in batches of 4
-        const batchSize = 4;
-        for (let i = 0; i < emails.length; i += batchSize) {
-            const emailBatch = emails.slice(i, i + batchSize); // Batch of 4 emails
-
-            // Send batch to API
-            await sendBatchToApi(emailBatch);
+    const handleVerify = async () => {
+        if (!csvFile) {
+            console.error("No file selected");
+            return;
         }
 
-    } catch (error) {
-        console.error('Error processing file:', error);
-    } finally {
-        setLoading(false);
-    }
-};
+        const formData = new FormData();
+        formData.append('file', csvFile);
 
-// Function to extract emails from CSV or Excel file
-const extractEmailsFromFile = async (file) => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const binaryStr = event.target.result;
+        setLoading(true);
 
-            const fileExtension = file.name.split('.').pop().toLowerCase();
-            let emails = [];
+        try {
+            const response = await fetch('http://localhost:8000/validate-emails', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await response.json();
+            console.log('Response:', data);
+            setResponseData(data.results)
+            setShowData(data.results)
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-            // Step 1: Check if the file is CSV or Excel and parse accordingly
-            if (fileExtension === 'csv') {
-                const workbook = XLSX.read(binaryStr, { type: 'binary', raw: true });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                emails = data.flat().filter(item => typeof item === 'string' && item.includes('@'));
-            } else if (fileExtension === 'xlsx') {
-                const workbook = XLSX.read(binaryStr, { type: 'binary' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                emails = data.flat().filter(item => typeof item === 'string' && item.includes('@'));
-            } else {
-                reject('Unsupported file type');
-                return;
-            }
 
-            resolve(emails); // Resolve with extracted emails
-        };
-        reader.onerror = (err) => reject(err);
-        reader.readAsBinaryString(file);
-    });
-};
-
-// Function to send a batch of emails to the API
-const sendBatchToApi = async (emailBatch) => {
-    try {
-        const response = await fetch('http://localhost:8000/validate-emails', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ emails: emailBatch }), // Sending the batch as a JSON object
-        });
-
-        const data = await response.json();
-        console.log('Batch Response:', data);
-        setResponseData(prev => [...prev, ...data.results]); // Append new results to previous ones
-        setShowData(prev => [...prev, ...data.results]); // Update UI with new data
-
-    } catch (error) {
-        console.error('Error sending batch:', error);
-    }
-};
 
     // single verify route
 
