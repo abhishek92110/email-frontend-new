@@ -68,19 +68,45 @@ const EmailBatch = () => {
     }
 
     // Handle form submission
-    const handleVerify = async () => {
-        if (!csvFile) {
-            console.error("No file selected");
-            return;
-        }
+    // const handleVerify = async () => {
+    //     if (!csvFile) {
+    //         console.error("No file selected");
+    //         return;
+    //     }
 
-        const formData = new FormData();
-        formData.append('file', csvFile);
+    //     const formData = new FormData();
+    //     formData.append('file', csvFile);
 
-        setLoading(true);
+    //     setLoading(true);
+
+    //     try {
+    //         const response = await fetch('http://localhost:8000/validate-emails', {
+    //             method: 'POST',
+    //             body: formData,
+    //         });
+    //         const data = await response.json();
+    //         console.log('Response:', data);
+    //         setResponseData(data.results)
+    //         setShowData(data.results)
+    //     } catch (error) {
+    //         console.error('Error uploading file:', error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+
+
+const handleVerify = async () => {
+    if (!csvFile) {
+        console.error("No file selected");
+        return;
+    }
+
+    setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8000/validate-emails', {
+            const response = await fetch('http://localhost:5500/validate-emails', {
                 method: 'POST',
                 body: formData,
             });
