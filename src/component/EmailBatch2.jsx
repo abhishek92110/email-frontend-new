@@ -12,34 +12,9 @@ const EmailBatch = () => {
     let email;
 
     // Handle file input change
-    // const handleFileChange = (event) => {
-    //     setCsvFile(event.target.files[0]);
-    // };
-
     const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(sheet);
-
-            // Check if rows exceed 1000
-            if (rows.length > 500) {
-                alert('Only files with up to 1000 records are allowed.');
-                setCsvFile(null);
-                event.target.value = null; // Clear the file input
-                return;
-            }
-
-            setCsvFile(file); // Set the file only if rows are within the limit
-        };
-
-        reader.readAsArrayBuffer(file);
+        setCsvFile(event.target.files[0]);
     };
-
 
     const s2ab = (s) => {
         const buf = new ArrayBuffer(s.length); // Create a buffer
